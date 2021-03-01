@@ -1,1 +1,1 @@
-"# CS 3100 Project" 
+# CS 3100 Project

@@ -2,6 +2,7 @@ const express = require("express")
 const port = 3000
 const tutoree_router = require("./routes/tutoree")
 const admin_router = require("./routes/admin")
+const session_router = require("./routes/admin")
 const mongo = require('./utils/db');
 
 // This method runs once and connects to the mongoDB
@@ -27,6 +28,7 @@ app.use(express.json())
 
 app.use("/tutorees", tutoree_router)
 app.use("/admins", admin_router)
+app.use("/sessions", session_router)
 
 server = app.listen(port, () => {
 	console.log('Example app listening at http://localhost:%d', port);

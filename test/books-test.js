@@ -1,6 +1,7 @@
 var assert = require('assert');
 const Tutoree = require('../models/tutoree');
 const Admin = require('../models/admin');
+const Session = require('../models/session');
 const request = require('request');
 const mongo = require('../utils/db');
 const { getMaxListeners } = require('process');
@@ -52,7 +53,7 @@ describe('Testing the Book API', async function(){
             assert.strictEqual(new Book(0, "My Book", "Me", "nooooooooooo", "Also me").isValid(), false);
         });
         it('Success 1 - Test the insertion of a valid Book (Book.save) - Success Msg test', async function(){
-            await new Admin(0, "Cristopher Yates", "cmoyates@gmail.com").save(db);
+            await new Session(0, 0, 0, "Wherever", "10:00", "Tomorrow").save(db);
             //assert.strictEqual(await new Book(1, "My Book", "Me", 2021, "Also me").save(db), "Book correctly inserted into the Database");
         });
         it('Success 2 - Test the update of a valid Book (Book.update) - Success Msg test', async function(){

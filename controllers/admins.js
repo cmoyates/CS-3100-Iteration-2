@@ -1,7 +1,7 @@
 const Admin = require("../models/admin.js")
 
 const create = async (req, res) => {
-	const new_admin = new Admin(parseInt(req.body.id), req.body.name, req.body.email);
+	const new_admin = new Admin(parseInt(req.body.id), req.body.firstName, req.body.lastName, req.body.email);
 	if(new_admin.isValid()) {
 		let db = req.db;
 		try{
@@ -44,7 +44,7 @@ const updateOne = async (req, res) => {
 	const admin_id = parseInt(req.params.id)
 	let db = req.db;
 	try{
-		let msg = await Admin.update(db, admin_id, admin_to_update.name, admin_to_update.email);
+		let msg = await Admin.update(db, admin_id, admin_to_update.firstName, admin_to_update.lastName, admin_to_update.email);
 		res.send(msg);
 	}catch(err){
 		res.send('There was an error while updating your Admin. (err:'+err+')');

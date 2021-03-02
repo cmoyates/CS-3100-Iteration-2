@@ -9,9 +9,10 @@ async function _get_tutorees_collection (db){
 };
 
 class Tutoree {
-	constructor(id, name, phoneNumber, email, gradeLevel) {
+	constructor(id, firstName, lastName, phoneNumber, email, gradeLevel) {
 		this.id        		= id
-		this.name      		= name
+		this.firstName      = firstName
+		this.lastName		= lastName
 		this.phoneNumber   	= phoneNumber
 		this.email      	= email
 		this.gradeLevel 	= gradeLevel
@@ -20,7 +21,8 @@ class Tutoree {
 	isValid(){
 		const rules = {
 			id: 	   		'required|integer',
-			name:      		'required|string',
+			firstName:      'required|string',
+			lastName:		'required|string',
 			phoneNumber:   	'required|integer',
 			email:      	'required|string',
 			gradeLevel: 	'required|integer',
@@ -53,15 +55,15 @@ class Tutoree {
 	};
 
 	// This function updates a tutoree in the database with a specified id
-	static async update(db, id, name, phoneNumber, email, gradeLevel) {
+	static async update(db, id, firstName, lastName, phoneNumber, email, gradeLevel) {
 		return new Promise(async function (resolve, reject){
 			// Create a tutoree variable to store all of the updates data
-			var updateTutoree = new Tutoree(id, name, phoneNumber, email, gradeLevel);
+			var updateTutoree = new Tutoree(id, firstName, lastName, phoneNumber, email, gradeLevel);
 			// Check if that tutoree is valid
 			if (updateTutoree.isValid()) {
 				// If so, update the data of the tutoree at the specified id and resolve
 				let collection = await _get_tutorees_collection(db);
-				let newVals = {$set: {"id": id, "name": name, "phoneNumber": phoneNumber, "email": email, "gradeLevel": gradeLevel}};
+				let newVals = {$set: {"id": id, "firstName": firstName, "lastName": lastName, "phoneNumber": phoneNumber, "email": email, "gradeLevel": gradeLevel}};
 				collection.updateOne({"id": id}, newVals, (err, obj) => {
 					if (err) throw err;
 					console.log("1 Tutoree correctly updated");

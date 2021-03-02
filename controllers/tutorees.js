@@ -1,7 +1,7 @@
 const Tutoree = require("../models/tutoree.js")
 
 const create = async (req, res) => {
-	const new_tutoree = new Tutoree(parseInt(req.body.id), req.body.name, parseInt(req.body.phoneNumber), req.body.email, parseInt(req.body.gradeLevel));
+	const new_tutoree = new Tutoree(parseInt(req.body.id), req.body.firstName, req.body.lastName, parseInt(req.body.phoneNumber), req.body.email, parseInt(req.body.gradeLevel));
 	if(new_tutoree.isValid()) {
 		let db = req.db;
 		try{
@@ -44,7 +44,7 @@ const updateOne = async (req, res) => {
 	const tutoree_id = parseInt(req.params.id)
 	let db = req.db;
 	try{
-		let msg = await Tutoree.update(db, tutoree_id, tutoree_to_update.name, tutoree_to_update.phoneNumber, tutoree_to_update.email, tutoree_to_update.gradeLevel);
+		let msg = await Tutoree.update(db, tutoree_id, tutoree_to_update.firstName, tutoree_to_update.lastName, tutoree_to_update.phoneNumber, tutoree_to_update.email, tutoree_to_update.gradeLevel);
 		res.send(msg);
 	}catch(err){
 		res.send('There was an error while updating your Tutoree. (err:'+err+')');

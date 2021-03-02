@@ -9,17 +9,19 @@ async function _get_admins_collection (db){
 };
 
 class Admin {
-	constructor(id, name, email) {
+	constructor(id, firstName, lastName, email) {
 		this.id        		= id
-		this.name      		= name
+		this.firstName      = firstName
+		this.lastName		= lastName
 		this.email      	= email
 	}
 	// This makes sure that all of the data of the admin is valid
 	isValid(){
 		const rules = {
 			id: 	   		'required|integer',
-			name:      		'required|string',
-			email:      	'required|string',
+			firstName:      'required|string',
+			lastName:		'required|string',
+			email:      	'required|string'
 		}
 		const validation = new Validator(this, rules);
 		return validation.passes();		
@@ -49,15 +51,15 @@ class Admin {
 	};
 
 	// This function updates a admin in the database with a specified id
-	static async update(db, id, name, email) {
+	static async update(db, id, firstName, lastName, email) {
 		return new Promise(async function (resolve, reject){
 			// Create a admin variable to store all of the updates data
-			var updateAdmin = new Admin(id, name, email);
+			var updateAdmin = new Admin(id, firstName, lastName, email);
 			// Check if that admin is valid
 			if (updateAdmin.isValid()) {
 				// If so, update the data of the admin at the specified id and resolve
 				let collection = await _get_admins_collection(db);
-				let newVals = {$set: {"id": id, "name": name, "email": email}};
+				let newVals = {$set: {"id": id, "firstName": firstName, "lastName": lastName, "email": email}};
 				collection.updateOne({"id": id}, newVals, (err, obj) => {
 					if (err) throw err;
 					console.log("1 Admin correctly updated");

@@ -1,6 +1,7 @@
 const express = require("express")
 const port = 3000
 const tutoree_router = require("./routes/tutoree")
+const tutor_router = require("./routes/tutor")
 const admin_router = require("./routes/admin")
 const session_router = require("./routes/admin")
 const mongo = require('./utils/db');
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 app.use(express.json())
 
 app.use("/tutorees", tutoree_router)
+app.use("/tutors", tutor_router)
 app.use("/admins", admin_router)
 app.use("/sessions", session_router)
 

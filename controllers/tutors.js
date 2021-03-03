@@ -27,6 +27,17 @@ const getOne = async (req, res) => {
 		throw new Error(err);
 	}
 }
+const getOneByEmail = async (req, res) => {
+	const tutor_to_get = parseInt(req.params.email);
+	let db = req.db;
+	try{
+		let obj = await Tutor.getTutorByEmail(db, tutor_to_get);
+		res.send(obj);
+	}catch(err){
+		res.send('There was an error while retrieving your Tutor. (err:'+err+')');
+		throw new Error(err);
+	}	
+}
 
 const updateOne = async (req, res) => {
 	const tutor_to_update = req.body;
@@ -96,6 +107,7 @@ const all = async (req, res) => {
 module.exports = {
 	create,
 	getOne,
+	getOneByEmail,
 	updateOne,
 	deleteOne,
     getAllBySubject,

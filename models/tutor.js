@@ -128,6 +128,28 @@ class Tutor {
 		});
 	};
 
+	// This function returns a tutor with a specified email from the database
+	static async getTutorByEmail(db, email) {
+		var email_get = email;
+		return new Promise(async function (resolve, reject){
+			let collection = await _get_tutors_collection(db);
+			// Try to find a tutor with the specified email in the database
+			collection.findOne({"email": email_get}, (err, obj) => {
+				if (err) throw err;
+				// If a null was returned (because nothing was found with that email), reject
+				if (obj == null) {
+					console.log("Tutor was not found");
+					reject("There was no tutor with the email " + email_get);
+				}
+				// If what was returned was not a null, resolve and return the tutor that was found
+				else {
+					console.log("1 Tutor was sent");
+					resolve(obj);
+				}
+			});
+		});
+	};
+
 	// This function returns all tutors that tutor a specified subject from the database
 	static async getTutorsBySubject(db, subject) {
 		var subject_get = subject;

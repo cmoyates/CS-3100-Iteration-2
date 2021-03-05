@@ -58,7 +58,7 @@ class Session {
 	static async update(db, id, tutorId, tutoreeId, location, time, date) {
 		return new Promise(async function (resolve, reject){
 			// Create a session variable to store all of the updates data
-			var updateSession = new Session(id, name, tutoreeId, location, time, date);
+			var updateSession = new Session(id, tutorId, tutoreeId, location, time, date);
 			// Check if that session is valid
 			if (updateSession.isValid()) {
 				// If so, update the data of the session at the specified id and resolve

@@ -1,7 +1,7 @@
 var assert = require('assert');
 const Tutoree = require('../models/tutoree');
 const Tutor = require('../models/tutor');
-const Admin = require('../models/admin');
+//const Admin = require('../models/admin');
 const Session = require('../models/session');
 const request = require('request');
 const mongo = require('../utils/db');
@@ -589,6 +589,257 @@ describe('Testing the Tutoring API', async function(){
                                             console.log(body);
                                             // Make sure that the tutor was deleted
                                             assert.strictEqual(body, "Tutor deleted");
+                                    });
+                            });
+                    });
+            });
+        });
+    });
+    describe('Testing the Session Model - Simple cases', function(){
+        it('Fail 1 - Test an invalid Session id', async function(){
+            // "Fred" is not a number and therefore not a valid id
+            assert.strictEqual(new Session("Fred", 3, 7, "Library", "12:00", "Nov 7 2021").isValid(), false);
+        });
+        it('Fail 2 - Test an invalid tutor id', async function(){
+            // The boolean false is not a number and therefore not a valid tutor id
+            assert.strictEqual(new Session(0, false, 7, "Library", "12:00", "Nov 7 2021").isValid(), false);
+        });
+        it('Fail 3 - Test an invalid tutoree id', function(){
+            // The string "nope" is not a number and therefore not a valid tutoree id
+            assert.strictEqual(new Session(0, 3, "nope", "Library", "12:00", "Nov 7 2021").isValid(), false);
+        });
+        it('Fail 4 - Test an invalid Session location', function(){
+            // The number 1900 is not a string and is therefore not a valid location
+            assert.strictEqual(new Session(0, 3, 7, 1900, "12:00", "Nov 7 2021").isValid(), false);
+        });
+        it('Fail 5 - Test Invalid Session time', function(){
+            // The boolean true is not a string and therefore not a valid time
+            assert.strictEqual(new Session(0, 3, 7, "Library", true, "Nov 7 2021").isValid(), false);
+        });
+        it('Fail 6 - Test Invalid Session date', function(){
+            // The number 0 is not a string and therefore not a valid date
+            assert.strictEqual(new Session(0, 3, 7, "Library", "12:00", 0).isValid(), false);
+        });
+        it('Success 1 - Test creation of a valid Session with parameters matching', function(){
+            assert.strictEqual(new Session(0, 3, 7, "Library", "12:00", "Nov 7 2021").isValid(), true);
+        });
+        it('Success 2 - Test the insertion of a valid Session (Session.save) - Success Msg test', async function(){
+            assert.strictEqual(await new Session(1, 12, 43, "Starbucks", "9:00", "April 20 2021").save(db), "Session correctly inserted into the Database");
+        });
+        it('Success 3 - Test the update of a valid Session (Session.update) - Success Msg test', async function(){
+            // Store the data about a session as well as a slightly modified versoion of the session
+            let session = new Session(2, 14, 8, "The park", "15:00", "July 7 2022");
+            let sessionUpdated = new Session(2, 17, 82, "The MUN Computer Lab", "15:02", "July 9 2022");
+            // Make sure that the session is successfully added to the database and that we recieve the success message for the session updating
+            assert.strictEqual(await session.save(db), "Session correctly inserted into the Database");
+            assert.strictEqual(await Session.update(db, 2, 17, 82, "The MUN Computer Lab", "15:02", "July 9 2022"), "Session correctly updated");
+            // Get a session with the id of the session we updated
+            let specifiedSession = await Session.getSessionById(db, 2);
+            // Check if the information about the session we got matches the info that we used to update the original session
+            assert.strictEqual(specifiedSession.id, sessionUpdated.id);
+            assert.strictEqual(specifiedSession.tutorId, sessionUpdated.tutorId);
+            assert.strictEqual(specifiedSession.tutoreeId, sessionUpdated.tutoreeId);
+            assert.strictEqual(specifiedSession.location, sessionUpdated.location);
+            assert.strictEqual(specifiedSession.time, sessionUpdated.time);
+            assert.strictEqual(specifiedSession.date, sessionUpdated.date);
+        });
+        it('Success 4 - Test the deletetion of a valid Session (Session.delete) - Success Msg test', async function(){
+            // Set the data a session variable
+            let session = new Session(3, 5, 3, "Main Building", "22:22", "Aug 17 2021");
+            // Test if the session is properly added to the database
+            assert.strictEqual(await session.save(db), "Session correctly inserted into the Database");
+            // Test that we recieve the success message from deleting the session
+            assert.strictEqual(await Session.delete(db, 3), "Session deleted");
+            // Try getting the session from the database (expecting it to fail)
+            try {
+                await Session.getSessionById(db, 3)
+                assert.fail("There shouldn't be any sessions with id 3");
+            } catch (error) {
+                assert.strictEqual(error, "There was no session with the id 3");
+            }
+        });
+        it('Success 5 - Test the retrieval of a session by id (Session.getSessionById) - Success Msg test', async function(){
+            // Set the data a session variable
+            let session = new Session(7, 32, 19, "Coffee Shop", "10:00", "Dec 12 2021")
+            // Save the session to the database
+            await session.save(db)
+            // Get the data on a session with that id from the database
+            let specifiedSession = await Session.getSessionById(db, 7);
+            // Check to make sure that all of the information about the session we got matches the one we saved
+            assert.strictEqual(specifiedSession.id, session.id);
+            assert.strictEqual(specifiedSession.tutorId, session.tutorId);
+            assert.strictEqual(specifiedSession.tutoreeId, session.tutoreeId);
+            assert.strictEqual(specifiedSession.location, session.location);
+            assert.strictEqual(specifiedSession.time, session.time);
+            assert.strictEqual(specifiedSession.date, session.date);
+        });
+        it('Success 6 - Test the retrieval of all sessions (Session.getSessions) - Success Msg test', async function(){
+            // Save a new session to the database so that there should be at least one session in the database
+            await new Session(6, 18, 27, "Library Study Room", "16:30", "Feb 8 2022").save(db)
+            // Get all of the sessions in the database
+            let allSessions = await Session.getSessions(db);
+            // Check if the number of sessions you just got was less than 1 (if so, fail the test)
+            if (allSessions.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+        });
+    });
+    describe('Testing the Session API - Complex Cases', function(){
+        it('Success 1 - POST /sessions, DELETE /sessions/:id', function(){
+            // Save the data of a session
+            let session = new Session(4, 43, 28, "Main Building", "14:30", "Oct 23 2021");
+            // Try to add that session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Check to make sure the session actually got added
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to delete the session that we just added
+                    request.delete({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions/4",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            // Make sure the session was deleted
+                            assert.strictEqual(body, "Session deleted");
+                    });
+            });
+        });
+        it('Success 2 - POST /sessions, GET /sessions (retrieval greater than 1), DELETE /session/:id', function(){
+            // Store the data for a session in a variable
+            let session = new Session(93, 15, 41, "Library", "17:30", "Sept 3 2021");
+            // Try to add the session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the session got added to the database
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to get all of the sessions in the database
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let allSessions = JSON.parse(body);
+                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            if (allSessions.length < 1) 
+                            {
+                                // If not fail the test
+                                assert.fail("There should be elements in the database");
+                            }
+                            // Try to delete the session that we added at first
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/sessions/93",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure that the session got deleted
+                                    assert.strictEqual(body, "Session deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 3 - POST /sessions, GET /sessions/:id, DELETE /session/:id', function(){
+            // Store the data for a session in a variable
+            let session = new Session(95, 2, 108, "MUN CS Lab", "15:45", "Nov 14 2022");
+            // Try to add the session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the session got added
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to get the session from the database that has the same id
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions/95",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let sessionTest = JSON.parse(body);
+                            // Check to see if the session that we got has all of the same information as the one we added first
+                            assert.strictEqual(sessionTest.id, session.id);
+                            assert.strictEqual(sessionTest.tutorId, session.tutorId);
+                            assert.strictEqual(sessionTest.tutoreeId, session.tutoreeId);
+                            assert.strictEqual(sessionTest.location, session.location);
+                            assert.strictEqual(sessionTest.time, session.time);
+                            assert.strictEqual(sessionTest.date, session.date);
+                            // Try to delete the session that we added
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/sessions/95",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure the session got deleted
+                                    assert.strictEqual(body, "Session deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 4 - POST /sessions, PUT /sessions/:id, GET /sessions/:id, DELETE /session/:id', function(){
+            // Store the data for a session in a variable as well as a modified version of the data in another variable
+            let session = new Session(99, 12, 32, "Starbucks", "13:00", "Oct 31 2021");
+            let sessionUpdated = new Session(99, 13, 21, "Generic Coffee Shop", "13:01", "Nov 1 2021");
+            // Try to add the original session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the session actually got added to the database
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to update the data of the session we just added to the "sessionUpdated" data defined above
+                    request.put({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions/99",
+                        body: JSON.stringify(sessionUpdated)
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            // Make sure the session was updated
+                            assert.strictEqual(body, "Session correctly updated");
+                            // Try to get a session with the same id from the database
+                            request.get({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/sessions/99",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    let sessionTest = JSON.parse(body);
+                                    // Make sure the data we got matches the "sessionUpdated" data
+                                    assert.strictEqual(sessionTest.id, sessionUpdated.id);
+                                    assert.strictEqual(sessionTest.tutorId, sessionUpdated.tutorId);
+                                    assert.strictEqual(sessionTest.tutoreeId, sessionUpdated.tutoreeId);
+                                    assert.strictEqual(sessionTest.location, sessionUpdated.location);
+                                    assert.strictEqual(sessionTest.time, sessionUpdated.time);
+                                    assert.strictEqual(sessionTest.date, sessionUpdated.date);
+                                    // Try to delete the session that we added and updated
+                                    request.delete({
+                                        headers: {"Content-Type": "application/json"},
+                                        url: myUrl + "/sessions/99",
+                                        }, (error, response, body) => {
+                                            console.log();
+                                            console.log(body);
+                                            // Make sure that the session was deleted
+                                            assert.strictEqual(body, "Session deleted");
                                     });
                             });
                     });

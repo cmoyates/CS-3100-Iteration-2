@@ -3,7 +3,7 @@ const port = 3000
 const tutoree_router = require("./routes/tutoree")
 const tutor_router = require("./routes/tutor")
 const admin_router = require("./routes/admin")
-const session_router = require("./routes/admin")
+const session_router = require("./routes/session")
 const mongo = require('./utils/db');
 
 // This method runs once and connects to the mongoDB

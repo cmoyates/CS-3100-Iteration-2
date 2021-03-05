@@ -947,7 +947,7 @@ describe('Testing the Tutoring API', async function(){
                     console.log(body);
                     // Make sure the session got added to the database
                     assert.strictEqual(body, "Session correctly inserted into the Database");
-                    // Try to get all of the sessions in the database
+                    // Try to get all of the sessions in the database that involve that tutor
                     request.get({
                         headers: {"Content-Type": "application/json"},
                         url: myUrl + "/sessions/tutor/86",
@@ -955,7 +955,7 @@ describe('Testing the Tutoring API', async function(){
                             console.log();
                             console.log(body);
                             let allSessions = JSON.parse(body);
-                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            // Check to see if you got more than one thing when you tried to get all of the correct sessions
                             if (allSessions.length < 1) 
                             {
                                 // If not fail the test
@@ -987,7 +987,7 @@ describe('Testing the Tutoring API', async function(){
                     console.log(body);
                     // Make sure the session got added to the database
                     assert.strictEqual(body, "Session correctly inserted into the Database");
-                    // Try to get all of the sessions in the database
+                    // Try to get all of the sessions in the database that involve that tutoree
                     request.get({
                         headers: {"Content-Type": "application/json"},
                         url: myUrl + "/sessions/tutoree/81",
@@ -995,7 +995,7 @@ describe('Testing the Tutoring API', async function(){
                             console.log();
                             console.log(body);
                             let allSessions = JSON.parse(body);
-                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            // Check to see if you got more than one thing when you tried to get all of the correct sessions
                             if (allSessions.length < 1) 
                             {
                                 // If not fail the test
@@ -1027,7 +1027,7 @@ describe('Testing the Tutoring API', async function(){
                     console.log(body);
                     // Make sure the session got added to the database
                     assert.strictEqual(body, "Session correctly inserted into the Database");
-                    // Try to get all of the sessions in the database
+                    // Try to get all of the sessions in the database with the specified date
                     request.get({
                         headers: {"Content-Type": "application/json"},
                         url: myUrl + "/sessions/date/01-03-22",
@@ -1035,7 +1035,7 @@ describe('Testing the Tutoring API', async function(){
                             console.log();
                             console.log(body);
                             let allSessions = JSON.parse(body);
-                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            // Check to see if you got more than one thing when you tried to get all of the correct sessions
                             if (allSessions.length < 1) 
                             {
                                 // If not fail the test

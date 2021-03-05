@@ -160,8 +160,8 @@ class Session {
 				}
 				// If not, reject
 				else {
-					console.log("Database is empty, no items sent");
-					reject("Database is empty");
+					console.log("No sessions found involving the specified tutor");
+					reject("No sessions found involving that tutor");
 				}
 			})
 		});
@@ -183,8 +183,31 @@ class Session {
 				}
 				// If not, reject
 				else {
-					console.log("Database is empty, no items sent");
-					reject("Database is empty");
+					console.log("No sessions found involving the specified tutoree");
+					reject("No sessions found involving that tutoree");
+				}
+			})
+		});
+	};
+
+	// This function gets all of the sessions from the database involving with a specific date
+	static async getSessionsByDate(db, date) {
+		var date_get = date;
+		return new Promise(async function (resolve, reject){
+			let collection = await _get_sessions_collection(db);
+			// Try to get all of the sessions with the specified date in the database
+			collection.find({"date": date_get}).toArray((err, items) => {
+				if (err) throw err;
+				// Check if more any items were found (more than 0)
+				if (items.length > 0) {
+					// If so, resolve and return everything
+					console.log(items.length + " item(s) sent");
+					resolve(items);
+				}
+				// If not, reject
+				else {
+					console.log("No sessions found with the specified date");
+					reject("No sessions found with that date");
 				}
 			})
 		});

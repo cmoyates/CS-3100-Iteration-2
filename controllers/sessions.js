@@ -95,7 +95,7 @@ const allWithDate = async (req, res) => {
 	const date_to_get = req.params.date;
 	let db = req.db;
 	try{
-		let obj = await Session.getSessionsByTutoree(db, date_to_get);
+		let obj = await Session.getSessionsByDate(db, date_to_get);
 		console.log('server-side: '+obj.length+' session(s) were returned');
 		res.send(obj);
 	}catch(err){

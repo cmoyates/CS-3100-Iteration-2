@@ -110,7 +110,7 @@ describe('Testing the Tutoring API', async function(){
             assert.strictEqual(specifiedTutoree.email, tutoree.email);
             assert.strictEqual(specifiedTutoree.gradeLevel, tutoree.gradeLevel);
         });
-        it('Success 6 - Test the retrieval of all tutoree (Tutoree.getTutorees) - Success Msg test', async function(){
+        it('Success 6 - Test the retrieval of all tutorees (Tutoree.getTutorees) - Success Msg test', async function(){
             // Save a new tutoree to the database so that there should be at least one tutoree in the database
             await new Tutoree(6, "Joe", "Rogan", 18005555555, "joro@entirely.possible", 4).save(db)
             // Get all of the tutorees in the database
@@ -120,6 +120,21 @@ describe('Testing the Tutoring API', async function(){
             {
                 assert.fail("There should be elements in the database");
             }
+        });
+        it('Success 7 - Test the retrieval of a tutoree by id (Tutoree.getTutoreeByEmail) - Success Msg test', async function(){
+            // Set the data a tutoree variable
+            let tutoree = new Tutoree(43, "Mason", "Travis", 18003636890, "mt@gmail.com", 2)
+            // Save the tutoree to the database
+            await tutoree.save(db)
+            // Get the data on a tutoree with that email from the database
+            let specifiedTutoree = await Tutoree.getTutoreeByEmail(db, "mt@gmail.com");
+            // Check to make sure that all of the information about the tutoree we got matches the one we saved
+            assert.strictEqual(specifiedTutoree.id, tutoree.id);
+            assert.strictEqual(specifiedTutoree.firstName, tutoree.firstName);
+            assert.strictEqual(specifiedTutoree.lastName, tutoree.lastName);
+            assert.strictEqual(specifiedTutoree.phoneNumber, tutoree.phoneNumber);
+            assert.strictEqual(specifiedTutoree.email, tutoree.email);
+            assert.strictEqual(specifiedTutoree.gradeLevel, tutoree.gradeLevel);
         });
     });
     describe('Testing the Tutoree API - Complex Cases', function(){
@@ -278,6 +293,47 @@ describe('Testing the Tutoring API', async function(){
                                             // Make sure that the tutoree was deleted
                                             assert.strictEqual(body, "Tutoree deleted");
                                     });
+                            });
+                    });
+            });
+        });
+        it('Success 5 - POST /tutorees, GET /tutorees/email/:email, DELETE /tutoree/:id', function(){
+            // Store the data for a tutoree in a variable
+            let tutoree = new Tutoree(107, "Clint", "Stevens", 12121212121, "cs@mun.ca", 13);
+            // Try to add the tutoree to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/tutorees",
+                body: JSON.stringify(tutoree)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the tutoree got added
+                    assert.strictEqual(body, "Tutoree correctly inserted into the Database");
+                    // Try to get the tutoree from the database that has the same id
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/tutorees/email/cs@mun.ca",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let tutoreeTest = JSON.parse(body);
+                            // Check to see if the tutoree that we got has all of the same information as the one we added first
+                            assert.strictEqual(tutoreeTest.id, tutoree.id);
+                            assert.strictEqual(tutoreeTest.firstName, tutoree.firstName);
+                            assert.strictEqual(tutoreeTest.lastName, tutoree.lastName);
+                            assert.strictEqual(tutoreeTest.phoneNumber, tutoree.phoneNumber);
+                            assert.strictEqual(tutoreeTest.email, tutoree.email);
+                            assert.strictEqual(tutoreeTest.gradeLevel, tutoree.gradeLevel);
+                            // Try to delete the tutoree that we added
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/tutorees/" + tutoreeTest.id,
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure the tutoree got deleted
+                                    assert.strictEqual(body, "Tutoree deleted");
                             });
                     });
             });
@@ -684,6 +740,39 @@ describe('Testing the Tutoring API', async function(){
                 assert.fail("There should be elements in the database");
             }
         });
+        it('Success 7 - Test the retrieval of all sessions (Session.getSessionsByTutor) - Success Msg test', async function(){
+            // Save a new session to the database so that there should be at least one session in the database with the correct tutor id
+            await new Session(120, 52, 83, "Coffe Shop", "09:30", "Dec 8 2022").save(db)
+            // Get all of the sessions in the database
+            let allSessionsWithTutor = await Session.getSessionsByTutor(db, 52);
+            // Check if the number of sessions you just got was less than 1 (if so, fail the test)
+            if (allSessionsWithTutor.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+        });
+        it('Success 8 - Test the retrieval of all sessions (Session.getSessionsByTutoree) - Success Msg test', async function(){
+            // Save a new session to the database so that there should be at least one session in the database with the correct tutoree id
+            await new Session(121, 47, 129, "Main Building", "14:00", "Aug 8 2022").save(db)
+            // Get all of the sessions in the database
+            let allSessionsWithTutoree = await Session.getSessionsByTutoree(db, 129);
+            // Check if the number of sessions you just got was less than 1 (if so, fail the test)
+            if (allSessionsWithTutoree.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+        });
+        it('Success 9 - Test the retrieval of all sessions (Session.getSessions) - Success Msg test', async function(){
+            // Save a new session to the database so that there should be at least one session in the database with the correct date
+            await new Session(122, 42, 52, "Library", "18:30", "07-08-22").save(db)
+            // Get all of the sessions in the database
+            let allSessionsWithDate = await Session.getSessionsByDate(db, "07-08-22");
+            // Check if the number of sessions you just got was less than 1 (if so, fail the test)
+            if (allSessionsWithDate.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+        });
     });
     describe('Testing the Session API - Complex Cases', function(){
         it('Success 1 - POST /sessions, DELETE /sessions/:id', function(){
@@ -841,6 +930,126 @@ describe('Testing the Tutoring API', async function(){
                                             // Make sure that the session was deleted
                                             assert.strictEqual(body, "Session deleted");
                                     });
+                            });
+                    });
+            });
+        });
+        it('Success 5 - POST /sessions, GET /sessions/tutor/:tutorId (retrieval greater than 1), DELETE /session/:id', function(){
+            // Store the data for a session in a variable
+            let session = new Session(193, 86, 213, "Library Study Room", "14:30", "Sept 5 2021");
+            // Try to add the session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the session got added to the database
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to get all of the sessions in the database
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions/tutor/86",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let allSessions = JSON.parse(body);
+                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            if (allSessions.length < 1) 
+                            {
+                                // If not fail the test
+                                assert.fail("There should be elements in the database");
+                            }
+                            // Try to delete the session that we added at first
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/sessions/193",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure that the session got deleted
+                                    assert.strictEqual(body, "Session deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 6 - POST /sessions, GET /sessions/tutoree/:tutoreeId (retrieval greater than 1), DELETE /session/:id', function(){
+            // Store the data for a session in a variable
+            let session = new Session(194, 72, 81, "Starbucks", "17:00", "Sept 4 2021");
+            // Try to add the session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the session got added to the database
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to get all of the sessions in the database
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions/tutoree/81",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let allSessions = JSON.parse(body);
+                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            if (allSessions.length < 1) 
+                            {
+                                // If not fail the test
+                                assert.fail("There should be elements in the database");
+                            }
+                            // Try to delete the session that we added at first
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/sessions/194",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure that the session got deleted
+                                    assert.strictEqual(body, "Session deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 7 - POST /sessions, GET /sessions/date/:date (retrieval greater than 1), DELETE /session/:id', function(){
+            // Store the data for a session in a variable
+            let session = new Session(195, 91, 123, "Main Building", "19:21", "01-03-22");
+            // Try to add the session to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/sessions",
+                body: JSON.stringify(session)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the session got added to the database
+                    assert.strictEqual(body, "Session correctly inserted into the Database");
+                    // Try to get all of the sessions in the database
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/sessions/date/01-03-22",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let allSessions = JSON.parse(body);
+                            // Check to see if you got more than one thing when you tried to get all of the sessions
+                            if (allSessions.length < 1) 
+                            {
+                                // If not fail the test
+                                assert.fail("There should be elements in the database");
+                            }
+                            // Try to delete the session that we added at first
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/sessions/195",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure that the session got deleted
+                                    assert.strictEqual(body, "Session deleted");
                             });
                     });
             });

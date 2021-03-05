@@ -1,7 +1,7 @@
 var assert = require('assert');
 const Tutoree = require('../models/tutoree');
 const Tutor = require('../models/tutor');
-//const Admin = require('../models/admin');
+const Admin = require('../models/admin');
 const Session = require('../models/session');
 const request = require('request');
 const mongo = require('../utils/db');
@@ -163,7 +163,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 2 - POST /tutorees, GET /tutorees (retrieval greater than 1), DELETE /tutoree/:id', function(){
+        it('Success 2 - POST /tutorees, GET /tutorees (retrieval greater than 1), DELETE /tutorees/:id', function(){
             // Store the data for a tutoree in a variable
             let tutoree = new Tutoree(93, "Pete", "Petersberg", 14444444444, "petepete@aaahhhh.pain", 7);
             // Try to add the tutoree to the database
@@ -203,7 +203,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 3 - POST /tutorees, GET /tutorees/:id, DELETE /tutoree/:id', function(){
+        it('Success 3 - POST /tutorees, GET /tutorees/:id, DELETE /tutorees/:id', function(){
             // Store the data for a tutoree in a variable
             let tutoree = new Tutoree(95, "James", "Hudson", 11111111111, "sorry@bored.com", 14);
             // Try to add the tutoree to the database
@@ -244,7 +244,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 4 - POST /tutorees, PUT /tutorees/:id, GET /tutorees/:id, DELETE /tutoree/:id', function(){
+        it('Success 4 - POST /tutorees, PUT /tutorees/:id, GET /tutorees/:id, DELETE /tutorees/:id', function(){
             // Store the data for a tutoree in a variable as well as a modified version of the data in another variable
             let tutoree = new Tutoree(99, "Rick", "Rollington", 13333333333, "never@gonna.give", 12);
             let tutoreeUpdated = new Tutoree(99, "Big", "Man", 19999999999, "large@gmail.co", 10);
@@ -297,7 +297,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 5 - POST /tutorees, GET /tutorees/email/:email, DELETE /tutoree/:id', function(){
+        it('Success 5 - POST /tutorees, GET /tutorees/email/:email, DELETE /tutorees/:id', function(){
             // Store the data for a tutoree in a variable
             let tutoree = new Tutoree(107, "Clint", "Stevens", 12121212121, "cs@mun.ca", 13);
             // Try to add the tutoree to the database
@@ -462,6 +462,43 @@ describe('Testing the Tutoring API', async function(){
                 assert.fail("There should be elements in the database");
             }
         });
+        it('Success 7 - Test the retrieval of a tutor by id (Tutor.getTutorByEmail) - Success Msg test', async function(){
+            // Set the data a tutor variable
+            let tutor = new Tutor(137, "Stanley", "Rodriguez", "stanrod@gmail.com", "Kinda dumb tbh...", 12341234123, [[true]], ["English"], [1])
+            // Save the tutor to the database
+            await tutor.save(db)
+            // Get the data on a tutor with that id from the database
+            let specifiedTutor = await Tutor.getTutorByEmail(db, "stanrod@gmail.com");
+            // Check to make sure that all of the information about the tutor we got matches the one we saved
+            assert.strictEqual(specifiedTutor.id, tutor.id);
+            assert.strictEqual(specifiedTutor.firstName, tutor.firstName);
+            assert.strictEqual(specifiedTutor.lastName, tutor.lastName);
+            assert.strictEqual(specifiedTutor.email, tutor.email);
+            assert.strictEqual(specifiedTutor.description, tutor.description);
+            assert.strictEqual(specifiedTutor.phoneNumber, tutor.phoneNumber);
+            for (let i = 0; i < specifiedTutor.availabilities.length; i++) {
+                for (let j = 0; j < specifiedTutor.availabilities[0].length; j++) {
+                    assert.strictEqual(specifiedTutor.availabilities[i][j], tutor.availabilities[i][j]);
+                }
+            }
+            for (let i = 0; i < specifiedTutor.subjects.length; i++) {
+                assert.strictEqual(specifiedTutor.subjects[i], tutor.subjects[i]);
+            }
+            for (let i = 0; i < specifiedTutor.feedback.length; i++) {
+                assert.strictEqual(specifiedTutor.feedback[i], tutor.feedback[i]);
+            }
+        });
+        it('Success 8 - Test the retrieval of all tutors (Tutor.getTutorsBySubject) - Success Msg test', async function(){
+            // Save a new tutor to the database so that there should be at least one tutor in the database
+            await new Tutor(136, "Math", "Man", "mm@mun.com", "I know the math things!", 12358132135, [[false]], ["Math"], [3]).save(db)
+            // Get all of the tutors in the database
+            let allTutors = await Tutor.getTutorsBySubject(db, "Math");
+            // Check if the number of tutors you just got was less than 1 (if so, fail the test)
+            if (allTutors.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+        });
     });
     describe('Testing the Tutor API - Complex Cases', function(){
         it('Success 1 - POST /tutors, DELETE /tutors/:id', function(){
@@ -489,7 +526,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 2 - POST /tutors, GET /tutors (retrieval greater than 1), DELETE /tutor/:id', function(){
+        it('Success 2 - POST /tutors, GET /tutors (retrieval greater than 1), DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable
             let tutor = new Tutor(93, "Mark", "Wahlberg", "outofideas@gmail.com", "Not even sure if the last name is spelled right", 18005554321, [[true]], ["Drama"], [1.3]);
             // Try to add the tutor to the database
@@ -529,7 +566,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 3 - POST /tutors, GET /tutors/:id, DELETE /tutor/:id', function(){
+        it('Success 3 - POST /tutors, GET /tutors/:id, DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable
             let tutor = new Tutor(95, "Tony", "Stark", "iron@man.com", "What am I signing up for?", 1, [[false]], ["Tech"], [2.4]);
             // Try to add the tutor to the database
@@ -581,7 +618,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 4 - POST /tutors, PUT /tutors/:id, GET /tutors/:id, DELETE /tutor/:id', function(){
+        it('Success 4 - POST /tutors, PUT /tutors/:id, GET /tutors/:id, DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable as well as a modified version of the data in another variable
             let tutor = new Tutor(99, "Steve", "Jobs", "support@apple.com", "Everything was totally my idea", 18004320034, [[false]], ["Business"], [2.1]);
             let tutorUpdated = new Tutor(99, "Steve", "Wozniak", "actualsupport@apple.com", "Really?", 18004320035, [[true]], ["Tech"], [2.9]);
@@ -646,6 +683,98 @@ describe('Testing the Tutoring API', async function(){
                                             // Make sure that the tutor was deleted
                                             assert.strictEqual(body, "Tutor deleted");
                                     });
+                            });
+                    });
+            });
+        });
+        it('Success 5 - POST /tutors, GET /tutors/subject/:subject (retrieval greater than 1), DELETE /tutors/:id', function(){
+            // Store the data for a tutor in a variable
+            let tutor = new Tutor(184, "Derek", "Johnson", "djboi@gmail.com", "Not even sure if the first name is spelled right", 15552342446, [[true]], ["Gym"], [1.6]);
+            // Try to add the tutor to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/tutors",
+                body: JSON.stringify(tutor)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the tutor got added to the database
+                    assert.strictEqual(body, "Tutor correctly inserted into the Database");
+                    // Try to get all of the tutors in the database
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/tutors/subject/Gym",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let allTutorsWithSubject = JSON.parse(body);
+                            // Check to see if you got more than one thing when you tried to get all of the tutors with the specified subject
+                            if (allTutorsWithSubject.length < 1) 
+                            {
+                                // If not fail the test
+                                assert.fail("There should be elements in the database");
+                            }
+                            // Try to delete the tutor that we added at first
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/tutors/184",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure that the tutor got deleted
+                                    assert.strictEqual(body, "Tutor deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 6 - POST /tutors, GET /tutors/email/:email, DELETE /tutors/:id', function(){
+            // Store the data for a tutor in a variable
+            let tutor = new Tutor(185, "Robert", "Roberts", "doubler@gmail.com", "Where am I?", 1, [[true]], ["Math"], [0.4]);
+            // Try to add the tutor to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/tutors",
+                body: JSON.stringify(tutor)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the tutor got added
+                    assert.strictEqual(body, "Tutor correctly inserted into the Database");
+                    // Try to get the tutor from the database that has the same id
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/tutors/email/doubler@gmail.com",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let tutorTest = JSON.parse(body);
+                            // Check to see if the tutor that we got has all of the same information as the one we added first
+                            assert.strictEqual(tutorTest.id, tutor.id);
+                            assert.strictEqual(tutorTest.firstName, tutor.firstName);
+                            assert.strictEqual(tutorTest.lastName, tutor.lastName);
+                            assert.strictEqual(tutorTest.email, tutor.email);
+                            assert.strictEqual(tutorTest.description, tutor.description);
+                            assert.strictEqual(tutorTest.phoneNumber, tutor.phoneNumber);
+                            for (let i = 0; i < tutorTest.availabilities.length; i++) {
+                                for (let j = 0; j < tutorTest.availabilities[0].length; j++) {
+                                    assert.strictEqual(tutorTest.availabilities[i][j], tutor.availabilities[i][j]);
+                                }
+                            }
+                            for (let i = 0; i < tutorTest.subjects.length; i++) {
+                                assert.strictEqual(tutorTest.subjects[i], tutor.subjects[i]);
+                            }
+                            for (let i = 0; i < tutorTest.feedback.length; i++) {
+                                assert.strictEqual(tutorTest.feedback[i], tutor.feedback[i]);
+                            }
+                            // Try to delete the tutor that we added
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/tutors/185",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure the tutor got deleted
+                                    assert.strictEqual(body, "Tutor deleted");
                             });
                     });
             });
@@ -800,7 +929,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 2 - POST /sessions, GET /sessions (retrieval greater than 1), DELETE /session/:id', function(){
+        it('Success 2 - POST /sessions, GET /sessions (retrieval greater than 1), DELETE /sessions/:id', function(){
             // Store the data for a session in a variable
             let session = new Session(93, 15, 41, "Library", "17:30", "Sept 3 2021");
             // Try to add the session to the database
@@ -840,7 +969,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 3 - POST /sessions, GET /sessions/:id, DELETE /session/:id', function(){
+        it('Success 3 - POST /sessions, GET /sessions/:id, DELETE /sessions/:id', function(){
             // Store the data for a session in a variable
             let session = new Session(95, 2, 108, "MUN CS Lab", "15:45", "Nov 14 2022");
             // Try to add the session to the database
@@ -881,7 +1010,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 4 - POST /sessions, PUT /sessions/:id, GET /sessions/:id, DELETE /session/:id', function(){
+        it('Success 4 - POST /sessions, PUT /sessions/:id, GET /sessions/:id, DELETE /sessions/:id', function(){
             // Store the data for a session in a variable as well as a modified version of the data in another variable
             let session = new Session(99, 12, 32, "Starbucks", "13:00", "Oct 31 2021");
             let sessionUpdated = new Session(99, 13, 21, "Generic Coffee Shop", "13:01", "Nov 1 2021");
@@ -934,7 +1063,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 5 - POST /sessions, GET /sessions/tutor/:tutorId (retrieval greater than 1), DELETE /session/:id', function(){
+        it('Success 5 - POST /sessions, GET /sessions/tutor/:tutorId (retrieval greater than 1), DELETE /sessions/:id', function(){
             // Store the data for a session in a variable
             let session = new Session(193, 86, 213, "Library Study Room", "14:30", "Sept 5 2021");
             // Try to add the session to the database
@@ -974,7 +1103,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 6 - POST /sessions, GET /sessions/tutoree/:tutoreeId (retrieval greater than 1), DELETE /session/:id', function(){
+        it('Success 6 - POST /sessions, GET /sessions/tutoree/:tutoreeId (retrieval greater than 1), DELETE /sessions/:id', function(){
             // Store the data for a session in a variable
             let session = new Session(194, 72, 81, "Starbucks", "17:00", "Sept 4 2021");
             // Try to add the session to the database
@@ -1014,7 +1143,7 @@ describe('Testing the Tutoring API', async function(){
                     });
             });
         });
-        it('Success 7 - POST /sessions, GET /sessions/date/:date (retrieval greater than 1), DELETE /session/:id', function(){
+        it('Success 7 - POST /sessions, GET /sessions/date/:date (retrieval greater than 1), DELETE /sessions/:id', function(){
             // Store the data for a session in a variable
             let session = new Session(195, 91, 123, "Main Building", "19:21", "01-03-22");
             // Try to add the session to the database
@@ -1050,6 +1179,299 @@ describe('Testing the Tutoring API', async function(){
                                     console.log(body);
                                     // Make sure that the session got deleted
                                     assert.strictEqual(body, "Session deleted");
+                            });
+                    });
+            });
+        });
+    });
+    describe('Testing the Admin Model - Simple cases', function(){
+        it('Fail 1 - Test an invalid Admin id', async function(){
+            // "Fred" is not a number and therefore not a valid id
+            assert.strictEqual(new Admin("Fred", "Charles", "Dickens", "bigcd@gmail.com").isValid(), false);
+        });
+        it('Fail 2 - Test an invalid Admin first name', function(){
+            // The number 0 is not a string and therefore not a valid first name
+            assert.strictEqual(new Admin(0, 0, "Dickens", "bigcd@gmail.com").isValid(), false);
+        });
+        it('Fail 3 - Test an invalid Admin last name', function(){
+            // The boolean true is not a string and is therefore not a valid last name
+            assert.strictEqual(new Admin(0, "Charles", true, "bigcd@gmail.com").isValid(), false);
+        });
+        it('Fail 4 - Test Invalid Admin email', function(){
+            // The number 4 is not a string and therefore not a valid email
+            assert.strictEqual(new Admin(0, "Charles", "Dickens", 4).isValid(), false);
+        });
+        it('Success 1 - Test creation of a valid Admin with parameters matching', function(){
+            assert.strictEqual(new Admin(0, "Charles", "Dickens", "bigcd@gmail.com").isValid(), true);
+        });
+        it('Success 2 - Test the insertion of a valid Admin (Admin.save) - Success Msg test', async function(){
+            assert.strictEqual(await new Admin(1, "Roy", "Gbiv", "rainbows@gmail.com").save(db), "Admin correctly inserted into the Database");
+        });
+        it('Success 3 - Test the update of a valid Admin (Admin.update) - Success Msg test', async function(){
+            // Store the data about a admin as well as a slightly modified versoion of the admin
+            let admin = new Admin(2, "Marcus", "Aurelius", "m@gmail.com");
+            let adminUpdated = new Admin(2, "Markus", "Smith", "smithsmith@gmail.com");
+            // Make sure that the admin is successfully added to the database and that we recieve the success message for the admin updating
+            assert.strictEqual(await admin.save(db), "Admin correctly inserted into the Database");
+            assert.strictEqual(await Admin.update(db, 2, "Markus", "Smith", "smithsmith@gmail.com"), "Admin correctly updated");
+            // Get a admin with the id of the admin we updated
+            let specifiedAdmin = await Admin.getAdminById(db, 2);
+            // Check if the information about the admin we got matches the info that we used to update the original admin
+            assert.strictEqual(specifiedAdmin.id, adminUpdated.id);
+            assert.strictEqual(specifiedAdmin.name, adminUpdated.name);
+            assert.strictEqual(specifiedAdmin.authors, adminUpdated.authors);
+            assert.strictEqual(specifiedAdmin.year, adminUpdated.year);
+            assert.strictEqual(specifiedAdmin.publisher, adminUpdated.publisher);
+        });
+        it('Success 4 - Test the deletetion of a valid Admin (Admin.delete) - Success Msg test', async function(){
+            // Set the data a admin variable
+            let admin = new Admin(3, "Jeremy", "Peters", "jpjp@gmail.com");
+            // Test if the admin is properly added to the database
+            assert.strictEqual(await admin.save(db), "Admin correctly inserted into the Database");
+            // Test that we recieve the success message from deleting the admin
+            assert.strictEqual(await Admin.delete(db, 3), "Admin deleted");
+            // Try getting the admin from the database (expecting it to fail)
+            try {
+                await Admin.getAdminById(db, 3)
+                assert.fail("There shouldn't be any admins with id 3");
+            } catch (error) {
+                assert.strictEqual(error, "There was no admin with the id 3");
+            }
+        });
+        it('Success 5 - Test the retrieval of a admin by id (Admin.getAdminById) - Success Msg test', async function(){
+            // Set the data a admin variable
+            let admin = new Admin(7, "Arron", "Runningoutoflastnames", "ehehron@gmail.com")
+            // Save the admin to the database
+            await admin.save(db)
+            // Get the data on a admin with that id from the database
+            let specifiedAdmin = await Admin.getAdminById(db, 7);
+            // Check to make sure that all of the information about the admin we got matches the one we saved
+            assert.strictEqual(specifiedAdmin.id, admin.id);
+            assert.strictEqual(specifiedAdmin.name, admin.name);
+            assert.strictEqual(specifiedAdmin.authors, admin.authors);
+            assert.strictEqual(specifiedAdmin.year, admin.year);
+            assert.strictEqual(specifiedAdmin.publisher, admin.publisher);
+        });
+        it('Success 6 - Test the retrieval of all admins (Admin.getAdmins) - Success Msg test', async function(){
+            // Save a new admin to the database so that there should be at least one admin in the database
+            await new Admin(6, "Tony", "Magenta", "thatsacolor@gmail.com").save(db)
+            // Get all of the admins in the database
+            let allAdmins = await Admin.getAdmins(db);
+            // Check if the number of admins you just got was less than 1 (if so, fail the test)
+            if (allAdmins.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+        });
+        it('Success 7 - Test the retrieval of a admin by id (Admin.getAdminByEmail) - Success Msg test', async function(){
+            // Set the data a admin variable
+            let admin = new Admin(7, "Richard", "Nixon", "nixed@gmail.com")
+            // Save the admin to the database
+            await admin.save(db)
+            // Get the data on a admin with that id from the database
+            let specifiedAdmin = await Admin.getAdminByEmail(db, "nixed@gmail.com");
+            // Check to make sure that all of the information about the admin we got matches the one we saved
+            assert.strictEqual(specifiedAdmin.id, admin.id);
+            assert.strictEqual(specifiedAdmin.name, admin.name);
+            assert.strictEqual(specifiedAdmin.authors, admin.authors);
+            assert.strictEqual(specifiedAdmin.year, admin.year);
+            assert.strictEqual(specifiedAdmin.publisher, admin.publisher);
+        });
+    });
+    describe('Testing the Admin API - Complex Cases', function(){
+        it('Success 1 - POST /admins, DELETE /admins/:id', function(){
+            // Save the data of a admin
+            let admin = new Admin(4, "Fredrick", "McGuffen", "gufrick@gmail.com");
+            // Try to add that admin to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/admins",
+                body: JSON.stringify(admin)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Check to make sure the admin actually got added
+                    assert.strictEqual(body, "Admin correctly inserted into the Database");
+                    // Try to delete the admin that we just added
+                    request.delete({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/admins/4",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            // Make sure the admin was deleted
+                            assert.strictEqual(body, "Admin deleted");
+                    });
+            });
+        });
+        it('Success 2 - POST /admins, GET /admins (retrieval greater than 1), DELETE /admins/:id', function(){
+            // Store the data for a admin in a variable
+            let admin = new Admin(93, "Martin", "Derhufferstein", "stein@gmail.com");
+            // Try to add the admin to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/admins",
+                body: JSON.stringify(admin)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the admin got added to the database
+                    assert.strictEqual(body, "Admin correctly inserted into the Database");
+                    // Try to get all of the admins in the database
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/admins",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let allAdmins = JSON.parse(body);
+                            // Check to see if you got more than one thing when you tried to get all of the admins
+                            if (allAdmins.length < 1) 
+                            {
+                                // If not fail the test
+                                assert.fail("There should be elements in the database");
+                            }
+                            // Try to delete the admin that we added at first
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/admins/93",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure that the admin got deleted
+                                    assert.strictEqual(body, "Admin deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 3 - POST /admins, GET /admins/:id, DELETE /admins/:id', function(){
+            // Store the data for a admin in a variable
+            let admin = new Admin(95, "Christian", "Works", "currentlyunemployed@gmail.com");
+            // Try to add the admin to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/admins",
+                body: JSON.stringify(admin)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the admin got added
+                    assert.strictEqual(body, "Admin correctly inserted into the Database");
+                    // Try to get the admin from the database that has the same id
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/admins/95",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let adminTest = JSON.parse(body);
+                            // Check to see if the admin that we got has all of the same information as the one we added first
+                            assert.strictEqual(adminTest.id, admin.id);
+                            assert.strictEqual(adminTest.name, admin.name);
+                            assert.strictEqual(adminTest.authors, admin.authors);
+                            assert.strictEqual(adminTest.year, admin.year);
+                            assert.strictEqual(adminTest.publisher, admin.publisher);
+                            // Try to delete the admin that we added
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/admins/95",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure the admin got deleted
+                                    assert.strictEqual(body, "Admin deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 4 - POST /admins, PUT /admins/:id, GET /admins/:id, DELETE /admins/:id', function(){
+            // Store the data for a admin in a variable as well as a modified version of the data in another variable
+            let admin = new Admin(99, "Frank", "Masterino", "nomoreideas@gmail.com");
+            let adminUpdated = new Admin(99, "Roomba", "LastName", "isuck@gmail.com");
+            // Try to add the original admin to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/admins",
+                body: JSON.stringify(admin)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the admin actually got added to the database
+                    assert.strictEqual(body, "Admin correctly inserted into the Database");
+                    // Try to update the data of the admin we just added to the "adminUpdated" data defined above
+                    request.put({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/admins/99",
+                        body: JSON.stringify(adminUpdated)
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            // Make sure the admin was updated
+                            assert.strictEqual(body, "Admin correctly updated");
+                            // Try to get a admin with the same id from the database
+                            request.get({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/admins/99",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    let adminTest = JSON.parse(body);
+                                    // Make sure the data we got matches the "adminUpdated" data
+                                    assert.strictEqual(adminTest.id, adminUpdated.id);
+                                    assert.strictEqual(adminTest.name, adminUpdated.name);
+                                    assert.strictEqual(adminTest.authors, adminUpdated.authors);
+                                    assert.strictEqual(adminTest.year, adminUpdated.year);
+                                    assert.strictEqual(adminTest.publisher, adminUpdated.publisher);
+                                    // Try to delete the admin that we added and updated
+                                    request.delete({
+                                        headers: {"Content-Type": "application/json"},
+                                        url: myUrl + "/admins/99",
+                                        }, (error, response, body) => {
+                                            console.log();
+                                            console.log(body);
+                                            // Make sure that the admin was deleted
+                                            assert.strictEqual(body, "Admin deleted");
+                                    });
+                            });
+                    });
+            });
+        });
+        it('Success 5 - POST /admins, GET /admins/email/:email, DELETE /admins/:id', function(){
+            // Store the data for a admin in a variable
+            let admin = new Admin(283, "Derherbergerdefer", "Johnson", "der@gmail.com");
+            // Try to add the admin to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/admins",
+                body: JSON.stringify(admin)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the admin got added
+                    assert.strictEqual(body, "Admin correctly inserted into the Database");
+                    // Try to get the admin from the database that has the same email
+                    request.get({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/admins/email/der@gmail.com",
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            let adminTest = JSON.parse(body);
+                            // Check to see if the admin that we got has all of the same information as the one we added first
+                            assert.strictEqual(adminTest.id, admin.id);
+                            assert.strictEqual(adminTest.name, admin.name);
+                            assert.strictEqual(adminTest.authors, admin.authors);
+                            assert.strictEqual(adminTest.year, admin.year);
+                            assert.strictEqual(adminTest.publisher, admin.publisher);
+                            // Try to delete the admin that we added
+                            request.delete({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/admins/283",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    // Make sure the admin got deleted
+                                    assert.strictEqual(body, "Admin deleted");
                             });
                     });
             });

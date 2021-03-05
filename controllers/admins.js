@@ -28,7 +28,7 @@ const getOne = async (req, res) => {
 	}	
 }
 const getOneByEmail = async (req, res) => {
-	const admin_to_get = parseInt(req.params.email);
+	const admin_to_get = req.params.email;
 	let db = req.db;
 	try{
 		let obj = await Admin.getAdminByEmail(db, admin_to_get);

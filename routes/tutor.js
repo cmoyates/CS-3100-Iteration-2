@@ -8,7 +8,7 @@ router.get("/:id", tutor_controller.getOne)
 router.get("/email/:email", tutor_controller.getOneByEmail)
 router.get("/", tutor_controller.all)
 router.get("/subject/:subject", tutor_controller.getAllBySubject)
-router.get("/feedback/:feedback", tutor_controller.getAllOrderedFeedback)
+router.get("/sort/feedback", tutor_controller.getAllOrderedFeedback)
 router.put('/:id', tutor_controller.updateOne)
 router.delete('/:id', tutor_controller.deleteOne)
 

@@ -31,7 +31,7 @@ class Tutor {
             phoneNumber:        'required|integer',
             availabilities:     'required|array',
             subjects:           'required|array',
-            feedback:           'required|array'
+            feedback:           'required|numeric'
 		}
 		const validation = new Validator(this, rules);
 		return validation.passes();		

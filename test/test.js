@@ -342,53 +342,53 @@ describe('Testing the Tutoring API', async function(){
     describe('Testing the Tutor Model - Simple cases', function(){
         it('Fail 1 - Test an invalid Tutor id', async function(){
             // "Fred" is not a number and therefore not a valid id
-            assert.strictEqual(new Tutor("Fred", "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor("Fred", "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], 2).isValid(), false);
         });
         it('Fail 2 - Test an invalid Tutor first name', function(){
             // The number 23 is not a string and therefore not a valid first name
-            assert.strictEqual(new Tutor(0, 23, "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor(0, 23, "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], 2).isValid(), false);
         });
         it('Fail 3 - Test an invalid Tutor last name', function(){
             // The number 48 is not a string and therefore not a valid last name
-            assert.strictEqual(new Tutor(0, "Paul", 48, "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor(0, "Paul", 48, "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], 2).isValid(), false);
         });
         it('Fail 4 - Test an invalid Tutor email', function(){
             // The boolean false is not a string and is therefore not a valid email
-            assert.strictEqual(new Tutor(0, "Paul", "Paulson", false, "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor(0, "Paul", "Paulson", false, "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], 2).isValid(), false);
         });
         it('Fail 5 - Test Invalid Tutor description', function(){
             // The boolean true is not a number and therefore not a valid description
-            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", true, 1234567890, [[false]], ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", true, 1234567890, [[false]], ["Math"], 2).isValid(), false);
         });
         it('Fail 6 - Test Invalid Tutor phoneNumber', function(){
             // The string "number" is not a number and therefore not a valid phoneNumber
-            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", "number", [[false]], ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", "number", [[false]], ["Math"], 2).isValid(), false);
         });
         it('Fail 7 - Test Invalid Tutor availabilities', function(){
             // The number 1 is not an array and therefore are not valid availabilities
-            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, 1, ["Math"], [2]).isValid(), false);
+            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, 1, ["Math"], 2).isValid(), false);
         });
         it('Fail 8 - Test Invalid Tutor subjects', function(){
             // The string "yay" is not an array and therefore are not valid subjects
-            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], "yay", ["Math"]).isValid(), false);
+            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], "yay", 2).isValid(), false);
         });
         it('Fail 9 - Test Invalid Tutor feedback', function(){
-            // The boolean false is not an array and therefore is not valid feedback
+            // The boolean false is not a number and therefore is not valid feedback
             assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], false).isValid(), false);
         });
         it('Success 1 - Test creation of a valid Tutor with parameters matching', function(){
-            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], [2]).isValid(), true);
+            assert.strictEqual(new Tutor(0, "Paul", "Paulson", "paul2@gmail.com", "Hi, I'm Paul!", 1234567890, [[false]], ["Math"], 2).isValid(), true);
         });
         it('Success 2 - Test the insertion of a valid Tutor (Tutor.save) - Success Msg test', async function(){
-            assert.strictEqual(await new Tutor(1, "Robert", "Roy", "nothing@clever.com", "Alcohol.", 17095555555, [[true]], ["Chemistry", "Biology"], [2.5]).save(db), "Tutor correctly inserted into the Database");
+            assert.strictEqual(await new Tutor(1, "Robert", "Roy", "nothing@clever.com", "Alcohol.", 17095555555, [[true]], ["Chemistry", "Biology"], 2.5).save(db), "Tutor correctly inserted into the Database");
         });
         it('Success 3 - Test the update of a valid Tutor (Tutor.update) - Success Msg test', async function(){
             // Store the data about a tutor as well as a slightly modified versoion of the tutor
             let tutor = new Tutor(2, "Kyle", "Albatross", "kyal@gmail.com", "My name is a bird lol", 12345555555, [[false, true]], ["Biology"], [1]);
-            let tutorUpdated = new Tutor(2, "Brad", "Desktop", "bradesk@msn.com", "Not the same guy as before", 18002626262, [[false, false]], ["Computer Science"], [1.2]);
+            let tutorUpdated = new Tutor(2, "Brad", "Desktop", "bradesk@msn.com", "Not the same guy as before", 18002626262, [[false, false]], ["Computer Science"], 1.2);
             // Make sure that the tutor is successfully added to the database and that we recieve the success message for the tutor updating
             assert.strictEqual(await tutor.save(db), "Tutor correctly inserted into the Database");
-            assert.strictEqual(await Tutor.update(db, 2, "Brad", "Desktop", "bradesk@msn.com", "Not the same guy as before", 18002626262, [[false, false]], ["Computer Science"], [1.2]), "Tutor correctly updated");
+            assert.strictEqual(await Tutor.update(db, 2, "Brad", "Desktop", "bradesk@msn.com", "Not the same guy as before", 18002626262, [[false, false]], ["Computer Science"], 1.2), "Tutor correctly updated");
             // Get a tutor with the id of the tutor we updated
             let specifiedTutor = await Tutor.getTutorById(db, 2);
             // Check if the information about the tutor we got matches the info that we used to update the original tutor
@@ -412,7 +412,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 4 - Test the deletetion of a valid Tutor (Tutor.delete) - Success Msg test', async function(){
             // Set the data a tutor variable
-            let tutor = new Tutor(3, "John", "Doe", "anon@tor.org", "Nobody Knows", 11111111111, [[true]], ["Computer Science"], [3]);
+            let tutor = new Tutor(3, "John", "Doe", "anon@tor.org", "Nobody Knows", 11111111111, [[true]], ["Computer Science"], 3);
             // Test if the tutor is properly added to the database
             assert.strictEqual(await tutor.save(db), "Tutor correctly inserted into the Database");
             // Test that we recieve the success message from deleting the tutor
@@ -427,7 +427,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 5 - Test the retrieval of a tutor by id (Tutor.getTutorById) - Success Msg test', async function(){
             // Set the data a tutor variable
-            let tutor = new Tutor(7, "Morgan", "Freeman", "idk@gmail.com", "Literally Morgan Freeman", 18005550001, [[false]], ["Drama"], [3])
+            let tutor = new Tutor(7, "Morgan", "Freeman", "idk@gmail.com", "Literally Morgan Freeman", 18005550001, [[false]], ["Drama"], 3)
             // Save the tutor to the database
             await tutor.save(db)
             // Get the data on a tutor with that id from the database
@@ -447,13 +447,11 @@ describe('Testing the Tutoring API', async function(){
             for (let i = 0; i < specifiedTutor.subjects.length; i++) {
                 assert.strictEqual(specifiedTutor.subjects[i], tutor.subjects[i]);
             }
-            for (let i = 0; i < specifiedTutor.feedback.length; i++) {
-                assert.strictEqual(specifiedTutor.feedback[i], tutor.feedback[i]);
-            }
+            assert.strictEqual(specifiedTutor.feedback, tutor.feedback);
         });
         it('Success 6 - Test the retrieval of all tutors (Tutor.getTutors) - Success Msg test', async function(){
             // Save a new tutor to the database so that there should be at least one tutor in the database
-            await new Tutor(6, "Bruce", "Wayne", "notbatman@batman.com", "What's a batman?", 10000000000, [[false]], ["Business"], [3]).save(db)
+            await new Tutor(316, "Steve", "Austin", "sc@gmail.com", "What?", 10003160000, [[false]], ["Physical Education"], 3).save(db)
             // Get all of the tutors in the database
             let allTutors = await Tutor.getTutors(db);
             // Check if the number of tutors you just got was less than 1 (if so, fail the test)
@@ -464,7 +462,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 7 - Test the retrieval of a tutor by id (Tutor.getTutorByEmail) - Success Msg test', async function(){
             // Set the data a tutor variable
-            let tutor = new Tutor(137, "Stanley", "Rodriguez", "stanrod@gmail.com", "Kinda dumb tbh...", 12341234123, [[true]], ["English"], [1])
+            let tutor = new Tutor(137, "Stanley", "Rodriguez", "stanrod@gmail.com", "Kinda dumb tbh...", 12341234123, [[true]], ["English"], 1)
             // Save the tutor to the database
             await tutor.save(db)
             // Get the data on a tutor with that id from the database
@@ -484,13 +482,11 @@ describe('Testing the Tutoring API', async function(){
             for (let i = 0; i < specifiedTutor.subjects.length; i++) {
                 assert.strictEqual(specifiedTutor.subjects[i], tutor.subjects[i]);
             }
-            for (let i = 0; i < specifiedTutor.feedback.length; i++) {
-                assert.strictEqual(specifiedTutor.feedback[i], tutor.feedback[i]);
-            }
+            assert.strictEqual(specifiedTutor.feedback, tutor.feedback);
         });
         it('Success 8 - Test the retrieval of all tutors (Tutor.getTutorsBySubject) - Success Msg test', async function(){
             // Save a new tutor to the database so that there should be at least one tutor in the database
-            await new Tutor(136, "Math", "Man", "mm@mun.com", "I know the math things!", 12358132135, [[false]], ["Math"], [3]).save(db)
+            await new Tutor(136, "Math", "Man", "mm@mun.com", "I know the math things!", 12358132135, [[false]], ["Math"], 3).save(db)
             // Get all of the tutors in the database
             let allTutors = await Tutor.getTutorsBySubject(db, "Math");
             // Check if the number of tutors you just got was less than 1 (if so, fail the test)
@@ -499,11 +495,37 @@ describe('Testing the Tutoring API', async function(){
                 assert.fail("There should be elements in the database");
             }
         });
+        it('Success 9 - Test the retrieval of all tutors (Tutor.getTutorsByFeedback) - Success Msg test', async function(){
+            // Save a new tutor to the database so that there should be at least one tutor in the database
+            await new Tutor(315, "Bruce", "Wayne", "notbatman@batman.com", "What's a batman?", 10000000000, [[false]], ["Business"], 3).save(db)
+            await new Tutor(317, "Clarke", "Kent", "notsosuper@gmail.com", "Nothing clever", 10000000001, [[false]], ["Journalism"], 2.7).save(db)
+            // Get all of the tutors in the database
+            let allTutors = await Tutor.getTutorsByFeedback(db);
+            // Check if the number of tutors you just got was less than 1 (if so, fail the test)
+            if (allTutors.length < 1) 
+            {
+                assert.fail("There should be elements in the database");
+            }
+            // Get the indicies of the two tutors that were just added
+            let tutor1Index;
+            let tutor2Index;
+            for (let i = 0; i < allTutors.length; i++) {
+                if (allTutors[i].id == 315) {
+                    tutor1Index = i;
+                }
+                else if (allTutors[i].id == 317) 
+                {
+                    tutor2Index = i;
+                }
+            }
+            // Check if the first tutor (with better feedback) comes earlier in the array (has a lower index)
+            assert.strictEqual((tutor1Index < tutor2Index), true);
+        });
     });
     describe('Testing the Tutor API - Complex Cases', function(){
         it('Success 1 - POST /tutors, DELETE /tutors/:id', function(){
             // Save the data of a tutor
-            let tutor = new Tutor(4, "Reggie", "Fils-Aimé", "support@nintendo.com", "Recently out of work", 18002553700, [[true]], ["Tech"], [2.1]);
+            let tutor = new Tutor(4, "Reggie", "Fils-Aimé", "support@nintendo.com", "Recently out of work", 18002553700, [[true]], ["Tech"], 2.1);
             // Try to add that tutor to the database
             request.post({
                 headers: {"Content-Type": "application/json"},
@@ -528,7 +550,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 2 - POST /tutors, GET /tutors (retrieval greater than 1), DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable
-            let tutor = new Tutor(93, "Mark", "Wahlberg", "outofideas@gmail.com", "Not even sure if the last name is spelled right", 18005554321, [[true]], ["Drama"], [1.3]);
+            let tutor = new Tutor(93, "Mark", "Wahlberg", "outofideas@gmail.com", "Not even sure if the last name is spelled right", 18005554321, [[true]], ["Drama"], 1.3);
             // Try to add the tutor to the database
             request.post({
                 headers: {"Content-Type": "application/json"},
@@ -568,7 +590,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 3 - POST /tutors, GET /tutors/:id, DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable
-            let tutor = new Tutor(95, "Tony", "Stark", "iron@man.com", "What am I signing up for?", 1, [[false]], ["Tech"], [2.4]);
+            let tutor = new Tutor(95, "Tony", "Stark", "iron@man.com", "What am I signing up for?", 1, [[false]], ["Tech"], 2.4);
             // Try to add the tutor to the database
             request.post({
                 headers: {"Content-Type": "application/json"},
@@ -620,8 +642,8 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 4 - POST /tutors, PUT /tutors/:id, GET /tutors/:id, DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable as well as a modified version of the data in another variable
-            let tutor = new Tutor(99, "Steve", "Jobs", "support@apple.com", "Everything was totally my idea", 18004320034, [[false]], ["Business"], [2.1]);
-            let tutorUpdated = new Tutor(99, "Steve", "Wozniak", "actualsupport@apple.com", "Really?", 18004320035, [[true]], ["Tech"], [2.9]);
+            let tutor = new Tutor(99, "Steve", "Jobs", "support@apple.com", "Everything was totally my idea", 18004320034, [[false]], ["Business"], 2.1);
+            let tutorUpdated = new Tutor(99, "Steve", "Wozniak", "actualsupport@apple.com", "Really?", 18004320035, [[true]], ["Tech"], 2.9);
             // Try to add the original tutor to the database
             request.post({
                 headers: {"Content-Type": "application/json"},
@@ -689,7 +711,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 5 - POST /tutors, GET /tutors/subject/:subject (retrieval greater than 1), DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable
-            let tutor = new Tutor(184, "Derek", "Johnson", "djboi@gmail.com", "Not even sure if the first name is spelled right", 15552342446, [[true]], ["Gym"], [1.6]);
+            let tutor = new Tutor(184, "Derek", "Johnson", "djboi@gmail.com", "Not even sure if the first name is spelled right", 15552342446, [[true]], ["Gym"], 1.6);
             // Try to add the tutor to the database
             request.post({
                 headers: {"Content-Type": "application/json"},
@@ -729,7 +751,7 @@ describe('Testing the Tutoring API', async function(){
         });
         it('Success 6 - POST /tutors, GET /tutors/email/:email, DELETE /tutors/:id', function(){
             // Store the data for a tutor in a variable
-            let tutor = new Tutor(185, "Robert", "Roberts", "doubler@gmail.com", "Where am I?", 1, [[true]], ["Math"], [0.4]);
+            let tutor = new Tutor(185, "Robert", "Roberts", "doubler@gmail.com", "Where am I?", 1, [[true]], ["Math"], 0.4);
             // Try to add the tutor to the database
             request.post({
                 headers: {"Content-Type": "application/json"},
@@ -775,6 +797,82 @@ describe('Testing the Tutoring API', async function(){
                                     console.log(body);
                                     // Make sure the tutor got deleted
                                     assert.strictEqual(body, "Tutor deleted");
+                            });
+                    });
+            });
+        });
+        it('Success 7 - POST /tutors, GET /tutors/sort/feedback (retrieval greater than 1), DELETE /tutors/:id', function(){
+            // Store the data for a tutor in a variable
+            let tutor1 = new Tutor(320, "Buddy", "Wasisname", "bud@gmail.com", "... and the other fellers", 18005554321, [[false]], ["Music"], 2.7);
+            let tutor2 = new Tutor(321, "Thomas", "Roooooooo", "troo@gmail.com", "I needed a job.", 18005554321, [[true]], ["English"], 0.4);
+            // Try to add the first tutor to the database
+            request.post({
+                headers: {"Content-Type": "application/json"},
+                url: myUrl + "/tutors",
+                body: JSON.stringify(tutor1)
+                }, (error, response, body) => {
+                    console.log();
+                    console.log(body);
+                    // Make sure the tutor got added to the database
+                    assert.strictEqual(body, "Tutor correctly inserted into the Database");
+                    // Try to add the second tutor to the database
+                    request.post({
+                        headers: {"Content-Type": "application/json"},
+                        url: myUrl + "/tutors",
+                        body: JSON.stringify(tutor2)
+                        }, (error, response, body) => {
+                            console.log();
+                            console.log(body);
+                            // Make sure the tutor got added to the database
+                            assert.strictEqual(body, "Tutor correctly inserted into the Database");
+                            // Try to get all of the tutors in the database
+                            request.get({
+                                headers: {"Content-Type": "application/json"},
+                                url: myUrl + "/tutors/sort/feedback",
+                                }, (error, response, body) => {
+                                    console.log();
+                                    console.log(body);
+                                    let allTutors = JSON.parse(body);
+                                    // Check to see if you got more than one thing when you tried to get all of the tutors
+                                    if (allTutors.length < 1) 
+                                    {
+                                        // If not fail the test
+                                        assert.fail("There should be elements in the database");
+                                    }
+                                    // Get the indecies of the tutors
+                                    let tutor1Index;
+                                    let tutor2Index;
+                                    for (let i = 0; i < allTutors.length; i++) {
+                                        if (allTutors[i].id == 320) {
+                                            tutor1Index = i;
+                                        }
+                                        else if (allTutors[i].id == 321) 
+                                        {
+                                            tutor2Index = i;
+                                        }
+                                    }
+                                    // Check if the first tutor (with better feedback) comes earlier in the array (has a lower index)
+                                    assert.strictEqual((tutor1Index < tutor2Index), true);
+                                    // Try to delete the tutor that we added first
+                                    request.delete({
+                                        headers: {"Content-Type": "application/json"},
+                                        url: myUrl + "/tutors/320",
+                                        }, (error, response, body) => {
+                                            console.log();
+                                            console.log(body);
+                                            // Make sure that the tutor got deleted
+                                            assert.strictEqual(body, "Tutor deleted");
+                                            // Try to delete the tutor that we added second
+                                            request.delete({
+                                                headers: {"Content-Type": "application/json"},
+                                                url: myUrl + "/tutors/321",
+                                                }, (error, response, body) => {
+                                                    console.log();
+                                                    console.log(body);
+                                                    // Make sure that the tutor got deleted
+                                                    assert.strictEqual(body, "Tutor deleted");
+                                            });
+                                    });
                             });
                     });
             });

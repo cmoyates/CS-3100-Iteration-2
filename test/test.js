@@ -460,7 +460,7 @@ describe('Testing the Tutoring API', async function(){
                 assert.fail("There should be elements in the database");
             }
         });
-        it('Success 7 - Test the retrieval of a tutor by id (Tutor.getTutorByEmail) - Success Msg test', async function(){
+        it('Success 7 - Test the retrieval of a tutor by email (Tutor.getTutorByEmail) - Success Msg test', async function(){
             // Set the data a tutor variable
             let tutor = new Tutor(137, "Stanley", "Rodriguez", "stanrod@gmail.com", "Kinda dumb tbh...", 12341234123, [[true]], ["English"], 1)
             // Save the tutor to the database
@@ -484,7 +484,7 @@ describe('Testing the Tutoring API', async function(){
             }
             assert.strictEqual(specifiedTutor.feedback, tutor.feedback);
         });
-        it('Success 8 - Test the retrieval of all tutors (Tutor.getTutorsBySubject) - Success Msg test', async function(){
+        it('Success 8 - Test the retrieval of all tutors that tutor a certain subject (Tutor.getTutorsBySubject) - Success Msg test', async function(){
             // Save a new tutor to the database so that there should be at least one tutor in the database
             await new Tutor(136, "Math", "Man", "mm@mun.com", "I know the math things!", 12358132135, [[false]], ["Math"], 3).save(db)
             // Get all of the tutors in the database
@@ -495,7 +495,7 @@ describe('Testing the Tutoring API', async function(){
                 assert.fail("There should be elements in the database");
             }
         });
-        it('Success 9 - Test the retrieval of all tutors (Tutor.getTutorsByFeedback) - Success Msg test', async function(){
+        it('Success 9 - Test the retrieval of all tutors sorted by feedback (Tutor.getTutorsByFeedback) - Success Msg test', async function(){
             // Save a new tutor to the database so that there should be at least one tutor in the database
             await new Tutor(315, "Bruce", "Wayne", "notbatman@batman.com", "What's a batman?", 10000000000, [[false]], ["Business"], 3).save(db)
             await new Tutor(317, "Clarke", "Kent", "notsosuper@gmail.com", "Nothing clever", 10000000001, [[false]], ["Journalism"], 2.7).save(db)
